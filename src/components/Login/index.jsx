@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import fetchModel from "../../lib/fetchModelData";
 import {
   Box,
   Paper,
@@ -16,7 +17,7 @@ function LoginRegister() {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    if (!loginForm.loginName.trim()) {
+    if (!loginForm.loginName) {
       setError("Please enter your login name");
       return;
     }
@@ -24,14 +25,19 @@ function LoginRegister() {
     setError("");
 
     try {
-      // TODO: Call API login here
       console.log("Login with:", loginForm.loginName);
-
-      /*
-      const response = await axios.post("/admin/login", {
-        login_name: loginName,
-      });
-      */
+      const response = await fetchModel(
+        `https://cckzwq-5000.csb.app/admin/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginForm),
+        }
+      );
+      const data = await response.json();
+      console.log("Login response: ", data);
     } catch (err) {
       setError("Invalid login name");
     }
@@ -91,16 +97,27 @@ function LoginRegister() {
           label="Login Name"
           variant="outlined"
           value={loginForm.loginName}
-          onChange={(e) => setLoginForm(e.target.value)}
+          onChange={(e) =>
+            setLoginForm({
+              ...loginForm,
+              loginName: e.target.value,
+            })
+          }
           sx={{ mb: 3 }}
         />
 
         <TextField
           fullWidth
           label="Password"
+          type="password"
           variant="outlined"
           value={loginForm.password}
-          onChange={(e) => setLoginForm(e.target.value)}
+          onChange={(e) =>
+            setLoginForm({
+              ...loginForm,
+              password: e.target.value,
+            })
+          }
           sx={{ mb: 3 }}
         />
 
