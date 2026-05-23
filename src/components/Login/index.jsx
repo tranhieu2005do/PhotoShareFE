@@ -42,7 +42,8 @@ function LoginRegister({ setCurrentUser }) {
       if (!response.ok) {
         throw new Error(data.message);
       }
-
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user_id", data.user._id);
       setCurrentUser(data);
 
       setLoginForm({

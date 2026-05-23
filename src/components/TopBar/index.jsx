@@ -17,6 +17,7 @@ function TopBar({ context, setCurrentUser }) {
 
       // JWT
       localStorage.removeItem("token");
+      localStorage.removeItem("user_id");
 
       // Clear current user
       setCurrentUser(null);
