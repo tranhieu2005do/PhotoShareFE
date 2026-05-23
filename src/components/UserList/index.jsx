@@ -19,7 +19,9 @@ function UserList() {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const response = await fetchModel("http://localhost:5000/user/list");
+        const response = await fetchModel(
+          "https://cckzwq-5000.csb.app/user/list"
+        );
         setUsers(response.data);
       } catch (error) {
         console.error("Failed to fetch user list", error);
@@ -30,7 +32,7 @@ function UserList() {
 
   return (
     <div>
-      <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: 'bold' }}>
+      <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: "bold" }}>
         User List
       </Typography>
       <List component="nav">
@@ -38,14 +40,16 @@ function UserList() {
           <React.Fragment key={item._id}>
             <ListItem disablePadding>
               <ListItemButton component={Link} to={`/users/${item._id}`}>
-                <ListItemText primary={`${item.first_name} ${item.last_name}`} />
+                <ListItemText
+                  primary={`${item.first_name} ${item.last_name}`}
+                />
               </ListItemButton>
             </ListItem>
             <Divider />
           </React.Fragment>
         ))}
       </List>
-      <Typography variant="body2" sx={{ p: 2, color: 'text.secondary' }}>
+      <Typography variant="body2" sx={{ p: 2, color: "text.secondary" }}>
         Select a user to view details.
       </Typography>
     </div>
