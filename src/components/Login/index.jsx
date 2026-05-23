@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import fetchModel from "../../lib/fetchModelData";
 import {
   Box,
   Paper,
@@ -9,7 +8,7 @@ import {
   Alert,
 } from "@mui/material";
 
-function LoginRegister() {
+function LoginRegister({ setCurrentUser }) {
   const [loginForm, setLoginForm] = useState({
     loginName: "",
     password: "",
@@ -17,7 +16,7 @@ function LoginRegister() {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    const { loginName, password } = loginForm;
+    const { loginName } = loginForm;
     if (!loginName.trim()) {
       setError("Please enter your login name");
       return;
@@ -29,17 +28,23 @@ function LoginRegister() {
       // TODO: Call API login here
       console.log("Login by:", loginName);
 
-      const response = await fetchModel(
-        `https://cckzwq-5000.csb.app/admin/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginForm),
-        }
-      );
-      console.log("Login response:", response);
+      const response = await fetch(`https://cckzwq-5000.csb.app/admin/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginForm),
+      });
+      const data = await response.json();
+
+      console.log("DATA:", data);
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      setCurrentUser(data);
+
       setLoginForm({
         loginName: "",
         password: "",
