@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Box, Card, CardMedia, CardContent, Divider, Avatar, Grid, Button } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Card,
+  CardMedia,
+  CardContent,
+  Divider,
+  Avatar,
+  Grid,
+  Button,
+} from "@mui/material";
 import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 
@@ -15,13 +25,15 @@ function UserPhotos({ setContext }) {
     const getData = async () => {
       try {
         const [photoData, userData] = await Promise.all([
-          fetchModel(`http://localhost:5000/photosOfUser/${userId}`),
-          fetchModel(`http://localhost:5000/user/${userId}`)
+          fetchModel(`https://cckzwq-5000.csb.app/photosOfUser/${userId}`),
+          fetchModel(`https://cckzwq-5000.csb.app/user/${userId}`),
         ]);
         setPhotos(photoData.data);
         setUser(userData.data);
         if (setContext) {
-          setContext(`Photos of ${userData.data.first_name} ${userData.data.last_name}`);
+          setContext(
+            `Photos of ${userData.data.first_name} ${userData.data.last_name}`
+          );
         }
       } catch (error) {
         console.error("Failed to fetch user photos", error);
@@ -44,52 +56,92 @@ function UserPhotos({ setContext }) {
       <Grid container spacing={6}>
         {photos.map((photo) => (
           <Grid item xs={12} key={photo._id}>
-            <Card sx={{ borderRadius: 4, overflow: 'hidden', boxShadow: 4 }}>
+            <Card sx={{ borderRadius: 4, overflow: "hidden", boxShadow: 4 }}>
               <CardMedia
                 component="img"
                 image={photo.file_name}
                 alt="User post"
-                sx={{ maxHeight: 700, width: '100%', objectFit: 'contain', bgcolor: '#f1f5f9' }}
+                sx={{
+                  maxHeight: 700,
+                  width: "100%",
+                  objectFit: "contain",
+                  bgcolor: "#f1f5f9",
+                }}
               />
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="caption" color="textSecondary" display="block" mb={2} sx={{ fontSize: '0.9rem' }}>
-                  Posted on: {new Date(photo.date_time).toLocaleString(undefined, { 
-                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  display="block"
+                  mb={2}
+                  sx={{ fontSize: "0.9rem" }}
+                >
+                  Posted on:{" "}
+                  {new Date(photo.date_time).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </Typography>
-                
-                <Typography variant="h6" fontWeight="bold" gutterBottom>Comments</Typography>
+
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Comments
+                </Typography>
                 <Divider sx={{ mb: 3 }} />
-                
+
                 {photo.comments && photo.comments.length > 0 ? (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     {photo.comments.map((comment) => (
-                      <Box key={comment._id} sx={{ display: 'flex', gap: 2 }}>
-                        <Avatar sx={{ width: 40, height: 40, bgcolor: 'secondary.main' }}>
+                      <Box key={comment._id} sx={{ display: "flex", gap: 2 }}>
+                        <Avatar
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            bgcolor: "secondary.main",
+                          }}
+                        >
                           {comment.user.first_name[0]}
                         </Avatar>
                         <Box sx={{ flexGrow: 1 }}>
-                          <Box display="flex" justifyContent="space-between" alignItems="center">
-                            <Typography 
-                              variant="subtitle2" 
-                              component={Link} 
-                              to={`/users/${comment.user._id}`} 
-                              sx={{ 
-                                textDecoration: 'none', 
-                                color: 'primary.main', 
-                                fontWeight: 'bold',
-                                "&:hover": { textDecoration: 'underline' } 
+                          <Box
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Typography
+                              variant="subtitle2"
+                              component={Link}
+                              to={`/users/${comment.user._id}`}
+                              sx={{
+                                textDecoration: "none",
+                                color: "primary.main",
+                                fontWeight: "bold",
+                                "&:hover": { textDecoration: "underline" },
                               }}
                             >
                               {comment.user.first_name} {comment.user.last_name}
                             </Typography>
                             <Typography variant="caption" color="textSecondary">
-                              {new Date(comment.date_time).toLocaleString(undefined, { 
-                                month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' 
-                              })}
+                              {new Date(comment.date_time).toLocaleString(
+                                undefined,
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
                             </Typography>
                           </Box>
-                          <Typography variant="body2" sx={{ mt: 0.5, color: 'text.primary' }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ mt: 0.5, color: "text.primary" }}
+                          >
                             {comment.comment}
                           </Typography>
                         </Box>
@@ -97,7 +149,13 @@ function UserPhotos({ setContext }) {
                     ))}
                   </Box>
                 ) : (
-                  <Typography variant="body2" color="textSecondary" fontStyle="italic">No comments yet. Be the first to comment!</Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    fontStyle="italic"
+                  >
+                    No comments yet. Be the first to comment!
+                  </Typography>
                 )}
               </CardContent>
             </Card>
