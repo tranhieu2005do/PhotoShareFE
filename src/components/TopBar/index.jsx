@@ -1,7 +1,48 @@
-import React from "react";
+import React, { useRef } from "react";
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 
 function TopBar({ context, setCurrentUser }) {
+  const fileInputRef = useRef(null);
+
+  const handleUploadPhoto = async (event) => {
+    try {
+      const file = event.target.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+      const formData = new FormData();
+
+      formData.append("photo", file);
+
+      const response = await fetch("https://cckzwq-5000.csb.app/photos/new", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      console.log("Upload success:", data);
+
+      alert("Photo uploaded successfully!");
+
+      // reset input
+      event.target.value = "";
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
   const handleLogout = async () => {
     try {
       const response = await fetch("https://cckzwq-5000.csb.app/admin/logout", {
@@ -70,6 +111,26 @@ function TopBar({ context, setCurrentUser }) {
           >
             {context || "Photo Sharing App"}
           </Typography>
+
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            ref={fileInputRef}
+            onChange={handleUploadPhoto}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => fileInputRef.current.click()}
+            sx={{
+              textTransform: "none",
+              fontWeight: 700,
+            }}
+          >
+            Add Photo
+          </Button>
 
           <Button
             variant="contained"
