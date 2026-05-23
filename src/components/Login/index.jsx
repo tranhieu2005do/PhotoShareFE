@@ -7,7 +7,7 @@ import {
   Button,
   Alert,
 } from "@mui/material";
-
+import { Link } from "react-router-dom";
 function LoginRegister({ setCurrentUser }) {
   const [loginForm, setLoginForm] = useState({
     loginName: "",
@@ -148,6 +148,19 @@ function LoginRegister({ setCurrentUser }) {
           }}
         >
           Login
+        </Button>
+        <Button
+          fullWidth
+          variant="outlined"
+          component={Link}
+          to="/register"
+          sx={{
+            mt: 2,
+            py: 1.2,
+            fontWeight: 700,
+          }}
+        >
+          Register
         </Button>
       </Paper>
     </Box>

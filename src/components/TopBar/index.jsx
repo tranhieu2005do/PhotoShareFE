@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 function TopBar({ context, setCurrentUser }) {
   const fileInputRef = useRef(null);
-
+  const navigate = useNavigate();
   const handleUploadPhoto = async (event) => {
     try {
       const file = event.target.files[0];
@@ -62,6 +62,7 @@ function TopBar({ context, setCurrentUser }) {
 
       // Clear current user
       setCurrentUser(null);
+      navigate("/");
     } catch (err) {
       console.log(err);
     }
