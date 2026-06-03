@@ -14,7 +14,8 @@ import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 import LoginRegister from "./components/Login";
-
+import UserComments from "./components/UserComment/index";
+import PhotoDetail from "./components/UserPhotos/PhotoDetail";
 const App = () => {
   const [topBarContext, setTopBarContext] = useState("");
   const [currentUser, setCurrentUser] = useState(false);
@@ -36,8 +37,12 @@ const App = () => {
   return (
     <Router>
       <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-        <TopBar context={topBarContext} setCurrentUser={setCurrentUser} advancedFeatures={advancedFeatures}
-  setAdvancedFeatures={setAdvancedFeatures}/>
+        <TopBar
+          context={topBarContext}
+          setCurrentUser={setCurrentUser}
+          advancedFeatures={advancedFeatures}
+          setAdvancedFeatures={setAdvancedFeatures}
+        />
         <Grid container spacing={0} sx={{ flexGrow: 1, pt: "64px" }}>
           <Grid
             item
@@ -99,8 +104,18 @@ const App = () => {
                   />
                   <Route
                     path="/photos/:userId"
-                    element={<UserPhotos setContext={setTopBarContext} advancedFeatures={advancedFeatures} />}
+                    element={
+                      <UserPhotos
+                        setContext={setTopBarContext}
+                        advancedFeatures={advancedFeatures}
+                      />
+                    }
                   />
+                  <Route
+                    path="/users/:userId/comments"
+                    element={<UserComments setContext={setTopBarContext} />}
+                  />
+                  <Route path="/photo/:photoId" element={<PhotoDetail />} />
                 </Routes>
               </Paper>
             </Box>

@@ -1,19 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AdvancedPhotoViewer from "./AdventureView";
+import PhotoDetail from "./PhotoDetail";
 import PhotoListView from "./PhotoListView";
-import {
-  Typography,
-  Box,
-  Card,
-  CardMedia,
-  CardContent,
-  Divider,
-  Avatar,
-  Grid,
-  Button,
-  TextField,
-} from "@mui/material";
-import { useParams, Link } from "react-router-dom";
+import { Typography, Box, Divider, Button } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 
 function UserPhotos({ setContext, advancedFeatures }) {
@@ -22,6 +11,7 @@ function UserPhotos({ setContext, advancedFeatures }) {
   const [user, setUser] = useState(null);
   const [commentInputs, setCommentInputs] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCurrentIndex(0);
@@ -105,6 +95,16 @@ function UserPhotos({ setContext, advancedFeatures }) {
   };
   const currentPhoto = photos.length > 0 ? photos[currentIndex] : null;
 
+  const handlePrev = () => {
+    if (currentIndex === 0) return;
+    setCurrentIndex((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentIndex === photos.length - 1) return;
+    setCurrentIndex((prev) => prev + 1);
+  };
+
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
@@ -114,18 +114,46 @@ function UserPhotos({ setContext, advancedFeatures }) {
       <Divider sx={{ mb: 4 }} />
 
       {advancedFeatures ? (
-        <AdvancedPhotoViewer
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            mb: 3,
+          }}
+        >
+          <Button
+            variant="contained"
+            disabled={currentIndex === 0}
+            onClick={() => setCurrentIndex((prev) => prev - 1)}
+          >
+            Previous
+          </Button>
+
+          <Typography variant="h6">
+            {currentIndex + 1} / {photos.length}
+          </Typography>
+
+          <Button
+            variant="contained"
+            disabled={currentIndex === photos.length - 1}
+            onClick={() => setCurrentIndex((prev) => prev + 1)}
+          >
+            Next
+          </Button>
+        </Box>
+      ) : (
+        <PhotoListView
           photos={photos}
-          currentPhoto={currentPhoto}
-          currentIndex={currentIndex}
-          setCurrentIndex={setCurrentIndex}
           commentInputs={commentInputs}
           setCommentInputs={setCommentInputs}
           handleAddComment={handleAddComment}
         />
-      ) : (
-        <PhotoListView
-          photos={photos}
+      )}
+      {advancedFeatures && currentPhoto && (
+        <PhotoDetail
+          photo={currentPhoto}
           commentInputs={commentInputs}
           setCommentInputs={setCommentInputs}
           handleAddComment={handleAddComment}
