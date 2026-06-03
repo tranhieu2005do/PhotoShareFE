@@ -1,0 +1,174 @@
+import React from "react";
+import {
+  Typography,
+  Box,
+  Card,
+  CardMedia,
+  CardContent,
+  Divider,
+  Avatar,
+  Grid,
+  Button,
+  TextField,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+
+function PhotoListView({
+  photos,
+  commentInputs,
+  setCommentInputs,
+  handleAddComment,
+}) {
+  return (
+    <Grid container spacing={6}>
+      {photos.map((photo) => (
+        <Grid item xs={12} key={photo._id}>
+          <Card sx={{ borderRadius: 4, overflow: "hidden", boxShadow: 4 }}>
+            <CardMedia
+              component="img"
+              image={photo.file_name}
+              alt="User post"
+              sx={{
+                maxHeight: 700,
+                width: "100%",
+                objectFit: "contain",
+                bgcolor: "#f1f5f9",
+              }}
+            />
+            <CardContent sx={{ p: 4 }}>
+              <Typography
+                variant="caption"
+                color="textSecondary"
+                display="block"
+                mb={2}
+                sx={{ fontSize: "0.9rem" }}
+              >
+                Posted on:{" "}
+                {new Date(photo.date_time).toLocaleString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Typography>
+
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                Comments ({photo.comments.length})
+              </Typography>
+              <Divider sx={{ mb: 3 }} />
+
+              {photo.comments && photo.comments.length > 0 ? (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  {photo.comments.map((comment) => (
+                    <Box key={comment._id} sx={{ display: "flex", gap: 2 }}>
+                      <Avatar
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          bgcolor: "secondary.main",
+                        }}
+                      >
+                        {comment.user_id.first_name[0]}
+                      </Avatar>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Typography
+                            variant="subtitle2"
+                            component={Link}
+                            to={`/users/${comment.user_id._id}`}
+                            sx={{
+                              textDecoration: "none",
+                              color: "primary.main",
+                              fontWeight: "bold",
+                              "&:hover": { textDecoration: "underline" },
+                            }}
+                          >
+                            {comment.user_id.first_name}{" "}
+                            {comment.user_id.last_name}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {new Date(comment.date_time).toLocaleString(
+                              undefined,
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </Typography>
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          sx={{ mt: 0.5, color: "text.primary" }}
+                        >
+                          {comment.comment}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  fontStyle="italic"
+                >
+                  No comments yet. Be the first to comment!
+                </Typography>
+              )}
+              <Divider sx={{ my: 3 }} />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  alignItems: "center",
+                }}
+              >
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Write a comment..."
+                  value={commentInputs[photo._id] || ""}
+                  onChange={(e) =>
+                    setCommentInputs((prev) => ({
+                      ...prev,
+                      [photo._id]: e.target.value,
+                    }))
+                  }
+                />
+
+                <Button
+                  variant="contained"
+                  onClick={() => handleAddComment(photo._id)}
+                >
+                  Post
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+      {photos.length === 0 && (
+        <Grid item xs={12}>
+          <Box textAlign="center" py={8} bgcolor="#f8fafc" borderRadius={4}>
+            <Typography variant="h5" color="textSecondary">
+              This user hasn't shared any moments yet.
+            </Typography>
+            <Button component={Link} to={`/users`} sx={{ mt: 2 }}>
+              Go Back to Users
+            </Button>
+          </Box>
+        </Grid>
+      )}
+    </Grid>
+  );
+}
+export default PhotoListView;

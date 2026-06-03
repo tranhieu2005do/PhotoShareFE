@@ -25,6 +25,41 @@ function Register() {
   const [error, setError] = useState("");
 
   const handleRegister = async () => {
+    
+    if (!form.first_name.trim()) {
+      setError("First name is required");
+      return;
+    }
+  
+    if (!form.last_name.trim()) {
+      setError("Last name is required");
+      return;
+    }
+  
+    if (!form.location.trim()) {
+      setError("Location is required");
+      return;
+    }
+  
+    if (!form.occupation.trim()) {
+      setError("Occupation is required");
+      return;
+    }
+  
+    if (!form.description.trim()) {
+      setError("Description is required");
+      return;
+    }
+  
+    if (!form.login_name.trim()) {
+      setError("Login name is required");
+      return;
+    }
+  
+    if (!form.password.trim()) {
+      setError("Password is required");
+      return;
+    }
     try {
       const response = await fetch(
         "https://cckzwq-5000.csb.app/user/register",

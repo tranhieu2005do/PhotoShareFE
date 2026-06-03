@@ -3,9 +3,7 @@ import { Typography, Box, Button, Divider, Stack, Paper } from "@mui/material";
 import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 
-/**
- * Define UserDetail, a React component of Project 4.
- */
+
 function UserDetail({ setContext }) {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
@@ -14,7 +12,7 @@ function UserDetail({ setContext }) {
     const getUser = async () => {
       try {
         const response = await fetchModel(
-          `https://cckzwq-5000.csb.app/user/${userId}`
+          `https://cckzwq-5000.csb.app/api/user/${userId}`
         );
         setUser(response.data);
         if (setContext) {

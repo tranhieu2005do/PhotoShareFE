@@ -10,9 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 
-/**
- * Define UserList, a React component of Project 4.
- */
+
 function UserList() {
   const [users, setUsers] = useState([]);
 
@@ -20,7 +18,7 @@ function UserList() {
     const getUsers = async () => {
       try {
         const response = await fetchModel(
-          "https://cckzwq-5000.csb.app/user/list"
+          "https://cckzwq-5000.csb.app/api/user/list"
         );
         setUsers(response.data);
       } catch (error) {

@@ -18,6 +18,7 @@ import LoginRegister from "./components/Login";
 const App = () => {
   const [topBarContext, setTopBarContext] = useState("");
   const [currentUser, setCurrentUser] = useState(false);
+  const [advancedFeatures, setAdvancedFeatures] = useState(false);
   if (!currentUser) {
     return (
       <Router>
@@ -35,7 +36,8 @@ const App = () => {
   return (
     <Router>
       <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-        <TopBar context={topBarContext} setCurrentUser={setCurrentUser} />
+        <TopBar context={topBarContext} setCurrentUser={setCurrentUser} advancedFeatures={advancedFeatures}
+  setAdvancedFeatures={setAdvancedFeatures}/>
         <Grid container spacing={0} sx={{ flexGrow: 1, pt: "64px" }}>
           <Grid
             item
@@ -97,7 +99,7 @@ const App = () => {
                   />
                   <Route
                     path="/photos/:userId"
-                    element={<UserPhotos setContext={setTopBarContext} />}
+                    element={<UserPhotos setContext={setTopBarContext} advancedFeatures={advancedFeatures} />}
                   />
                 </Routes>
               </Paper>

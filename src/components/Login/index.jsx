@@ -16,16 +16,20 @@ function LoginRegister({ setCurrentUser }) {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    const { loginName } = loginForm;
+    const { loginName, password } = loginForm;
     if (!loginName.trim()) {
       setError("Please enter your login name");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Please enter your password");
       return;
     }
 
     setError("");
 
     try {
-      // TODO: Call API login here
       console.log("Login by:", loginName);
 
       const response = await fetch(`https://cckzwq-5000.csb.app/admin/login`, {
@@ -44,6 +48,8 @@ function LoginRegister({ setCurrentUser }) {
       }
       localStorage.setItem("token", data.token);
       localStorage.setItem("user_id", data.user._id);
+      localStorage.setItem("first_name", data.user.first_name);
+      localStorage.setItem("last_name", data.user.last_name);
       setCurrentUser(data);
 
       setLoginForm({

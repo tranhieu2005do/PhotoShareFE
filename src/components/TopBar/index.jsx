@@ -1,7 +1,12 @@
 import React, { useRef } from "react";
-import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
+import { AppBar, Toolbar, Checkbox, Typography, Box, Button ,FormControlLabel } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-function TopBar({ context, setCurrentUser }) {
+function TopBar({ 
+    context, 
+    setCurrentUser,
+    advancedFeatures,
+    setAdvancedFeatures, }) 
+  {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const handleUploadPhoto = async (event) => {
@@ -18,7 +23,7 @@ function TopBar({ context, setCurrentUser }) {
 
       formData.append("photo", file);
 
-      const response = await fetch("https://cckzwq-5000.csb.app/photos/new", {
+      const response = await fetch("https://cckzwq-5000.csb.app/api/photo/new", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,6 +64,8 @@ function TopBar({ context, setCurrentUser }) {
       // JWT
       localStorage.removeItem("token");
       localStorage.removeItem("user_id");
+      localStorage.removeItem("first_name");
+      localStorage.removeItem("last_name");
 
       // Clear current user
       setCurrentUser(null);
@@ -90,7 +97,9 @@ function TopBar({ context, setCurrentUser }) {
             letterSpacing: 0.5,
           }}
         >
-          Do Tran Hieu
+          {localStorage.getItem("first_name") +
+            " " +
+            localStorage.getItem("last_name")}
         </Typography>
 
         <Box
@@ -112,6 +121,26 @@ function TopBar({ context, setCurrentUser }) {
           >
             {context || "Photo Sharing App"}
           </Typography>
+
+          <FormControlLabel
+  control={
+    <Checkbox
+      checked={advancedFeatures}
+      onChange={(e) => setAdvancedFeatures(e.target.checked)}
+      sx={{
+        color: "white",
+        "&.Mui-checked": {
+          color: "white",
+        },
+      }}
+    />
+  }
+  label="Enable Advanced Features"
+  sx={{
+    color: "white",
+    mr: 2,
+  }}
+/>
 
           <input
             type="file"

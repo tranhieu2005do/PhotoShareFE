@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import AdvancedPhotoViewer from "./AdventureView";
+import PhotoListView from "./PhotoListView";
 import {
   Typography,
   Box,
@@ -14,21 +16,25 @@ import {
 import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 
-/**
- * Define UserPhotos, a React component of Project 4.
- */
-function UserPhotos({ setContext }) {
+function UserPhotos({ setContext, advancedFeatures }) {
   const { userId } = useParams();
   const [photos, setPhotos] = useState([]);
   const [user, setUser] = useState(null);
   const [commentInputs, setCommentInputs] = useState({});
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [userId]);
 
   useEffect(() => {
     const getData = async () => {
       try {
         const [photoData, userData] = await Promise.all([
-          fetchModel(`https://cckzwq-5000.csb.app/photosOfUser/${userId}`),
-          fetchModel(`https://cckzwq-5000.csb.app/user/${userId}`),
+          fetchModel(
+            `https://cckzwq-5000.csb.app/api/photo/photosOfUser/${userId}`
+          ),
+          fetchModel(`https://cckzwq-5000.csb.app/api/user/${userId}`),
         ]);
         console.log(photoData);
         setPhotos(photoData.data);
@@ -60,7 +66,7 @@ function UserPhotos({ setContext }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `https://cckzwq-5000.csb.app/commentsOfPhoto/${photoId}`,
+        `https://cckzwq-5000.csb.app/api/photo/commentsOfPhoto/${photoId}`,
         {
           method: "POST",
           headers: {
@@ -89,7 +95,7 @@ function UserPhotos({ setContext }) {
 
       // reload photos
       const photoData = await fetchModel(
-        `https://cckzwq-5000.csb.app/photosOfUser/${userId}`
+        `https://cckzwq-5000.csb.app/api/photo/photosOfUser/${userId}`
       );
 
       setPhotos(photoData.data);
@@ -97,165 +103,34 @@ function UserPhotos({ setContext }) {
       console.error(err);
     }
   };
+  const currentPhoto = photos.length > 0 ? photos[currentIndex] : null;
 
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
-        Photos of {user.first_name} {user.last_name}
+        Photos of {user.first_name} {user.last_name} ({photos.length})
       </Typography>
+
       <Divider sx={{ mb: 4 }} />
 
-      <Grid container spacing={6}>
-        {photos.map((photo) => (
-          <Grid item xs={12} key={photo._id}>
-            <Card sx={{ borderRadius: 4, overflow: "hidden", boxShadow: 4 }}>
-              <CardMedia
-                component="img"
-                image={photo.file_name}
-                alt="User post"
-                sx={{
-                  maxHeight: 700,
-                  width: "100%",
-                  objectFit: "contain",
-                  bgcolor: "#f1f5f9",
-                }}
-              />
-              <CardContent sx={{ p: 4 }}>
-                <Typography
-                  variant="caption"
-                  color="textSecondary"
-                  display="block"
-                  mb={2}
-                  sx={{ fontSize: "0.9rem" }}
-                >
-                  Posted on:{" "}
-                  {new Date(photo.date_time).toLocaleString(undefined, {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Typography>
-
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  Comments
-                </Typography>
-                <Divider sx={{ mb: 3 }} />
-
-                {photo.comments && photo.comments.length > 0 ? (
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
-                  >
-                    {photo.comments.map((comment) => (
-                      <Box key={comment._id} sx={{ display: "flex", gap: 2 }}>
-                        <Avatar
-                          sx={{
-                            width: 40,
-                            height: 40,
-                            bgcolor: "secondary.main",
-                          }}
-                        >
-                          {comment.user_id.first_name[0]}
-                        </Avatar>
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Box
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                          >
-                            <Typography
-                              variant="subtitle2"
-                              component={Link}
-                              to={`/users/${comment.user_id._id}`}
-                              sx={{
-                                textDecoration: "none",
-                                color: "primary.main",
-                                fontWeight: "bold",
-                                "&:hover": { textDecoration: "underline" },
-                              }}
-                            >
-                              {comment.user_id.first_name}{" "}
-                              {comment.user_id.last_name}
-                            </Typography>
-                            <Typography variant="caption" color="textSecondary">
-                              {new Date(comment.date_time).toLocaleString(
-                                undefined,
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
-                            </Typography>
-                          </Box>
-                          <Typography
-                            variant="body2"
-                            sx={{ mt: 0.5, color: "text.primary" }}
-                          >
-                            {comment.comment}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    fontStyle="italic"
-                  >
-                    No comments yet. Be the first to comment!
-                  </Typography>
-                )}
-                <Divider sx={{ my: 3 }} />
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                    alignItems: "center",
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Write a comment..."
-                    value={commentInputs[photo._id] || ""}
-                    onChange={(e) =>
-                      setCommentInputs((prev) => ({
-                        ...prev,
-                        [photo._id]: e.target.value,
-                      }))
-                    }
-                  />
-
-                  <Button
-                    variant="contained"
-                    onClick={() => handleAddComment(photo._id)}
-                  >
-                    Post
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-        {photos.length === 0 && (
-          <Grid item xs={12}>
-            <Box textAlign="center" py={8} bgcolor="#f8fafc" borderRadius={4}>
-              <Typography variant="h5" color="textSecondary">
-                This user hasn't shared any moments yet.
-              </Typography>
-              <Button component={Link} to={`/users`} sx={{ mt: 2 }}>
-                Go Back to Users
-              </Button>
-            </Box>
-          </Grid>
-        )}
-      </Grid>
+      {advancedFeatures ? (
+        <AdvancedPhotoViewer
+          photos={photos}
+          currentPhoto={currentPhoto}
+          currentIndex={currentIndex}
+          setCurrentIndex={setCurrentIndex}
+          commentInputs={commentInputs}
+          setCommentInputs={setCommentInputs}
+          handleAddComment={handleAddComment}
+        />
+      ) : (
+        <PhotoListView
+          photos={photos}
+          commentInputs={commentInputs}
+          setCommentInputs={setCommentInputs}
+          handleAddComment={handleAddComment}
+        />
+      )}
     </Box>
   );
 }
